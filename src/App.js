@@ -3,11 +3,28 @@ import { useDispatch, useSelector } from 'react-redux';
 import { increment, decrement, incrementByAmount } from './reducers/counterSlice';
 import { useState } from 'react';
 import cat from './cat.gif';
+import api from './services/api';
 
 function App() {
   const { value } = useSelector((state) => state.counter);
   const dispatch = useDispatch();
   const[amount, setAmount] = useState('');
+
+  let save = async value => {
+    let payload = {
+      data: value,
+      database: localStorage.getItem('database'),
+    };
+    let res = await api.post(payload);
+    let data = res.data;
+    console.log(data);
+  };
+
+  const onSubmit = async values => {
+    // console.log(values);
+    await save(JSON.stringify(values, null, 2));
+  }
+
   return (
     <div className="App">
       <header classname="header">
@@ -48,6 +65,12 @@ function App() {
           onClick={ () => dispatch(incrementByAmount(+amount))}
         >
           Add amount
+        </button>
+        <button
+          type="submit"
+          onClick={onSubmit}
+        >
+          Enviar
         </button>
       </div>
       </div>
